@@ -1,8 +1,4 @@
-package parser.specs
-
 import org.specs2.mutable._
-
-import java.util.concurrent.TimeUnit
 
 import parser._
 import models._

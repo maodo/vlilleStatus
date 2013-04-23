@@ -34,7 +34,7 @@ object VlilleParser {
   }
 
   def list(): List[Station] = {
-    Logger.debug("Get ville stations")
+    Logger.debug("Get vlille stations")
     val elem = xml(VlilleListUrl)
     var stations: List[Station] = List()
 
