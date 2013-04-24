@@ -1,6 +1,9 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
 # ~~~~
+# Routes
+# ~~~~
+
+# Index
+GET     /                           controllers.StationsController.index
 
 # Stations list
 GET     /api/stations               controllers.StationsController.list

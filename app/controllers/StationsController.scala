@@ -11,7 +11,11 @@ import models._
 import mongo._
 
 object StationsController extends Controller {
-  
+
+  def index = Action {
+    Ok(views.html.index())
+  }
+
   def list = Action {
     implicit val writeTweetAsJson = Json.writes[Station]
     Async {
