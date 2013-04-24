@@ -4,6 +4,7 @@ import concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 
 import play.api.Play.current
+import play.api.cache.Cache
 import play.api.Logger
 
 import play.modules.reactivemongo.ReactiveMongoPlugin
@@ -27,9 +28,11 @@ object StationsDao extends MongoDao {
   implicit val reader = StationBSON.Reader
 
   def find(): Future[List[Station]] = {
-    Logger.debug("Find all documents from " + collection.name)
-    val q = BSONDocument()
-    collection.find(q).toList
+    Cache.getOrElse[Future[List[Station]]]("stations") {
+      Logger.debug("Find all documents from " + collection.name)
+
+      collection.find(BSONDocument()).toList
+    }
   }
 
   def save(stations: List[Station]) = {
