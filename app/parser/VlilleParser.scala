@@ -59,7 +59,7 @@ object VlilleParser {
     val elem = xml(VlilleDetailsUrl + stationId)
 
     new StationDetails(
-      stationId.toInt,
+      stationId,
       if (((elem \ "status") text).toString().toInt == 1) true else false,
       ((elem \ "bikes") text).toString().toInt,
       ((elem \ "attachs") text).toString().toInt)

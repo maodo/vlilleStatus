@@ -8,7 +8,7 @@ import play.api.cache.Cache
 import play.api.Logger
 
 import play.modules.reactivemongo.ReactiveMongoPlugin
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONInteger, BSONDocument}
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 
@@ -31,7 +31,13 @@ object StationsDao extends MongoDao {
     Cache.getOrElse[Future[List[Station]]]("stations") {
       Logger.debug("Find all documents from " + collection.name)
 
-      collection.find(BSONDocument()).toList
+      val query = BSONDocument(
+        "$orderby" -> BSONDocument(
+          "name" -> BSONInteger(1)
+        ),
+        "$query" -> BSONDocument()
+      )
+      collection.find(query).toList
     }
   }
 

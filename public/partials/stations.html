@@ -1,0 +1,46 @@
+<div id="stations-list" class="container-fluid">
+    <div class="row-fluid">
+        <div id="stations-list-query" class="span2">
+            <input id="stations-list-query-input" ng-model="query">
+        </div>
+        <div id="stations-list-content">
+            <ul class="nav nav-list">
+                <li ng-repeat="station in stations | filter:query">
+                    {{station.name}}
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    #stations-list {
+        position: absolute;
+        top: 40px;
+        height: 100%;
+        width: 12%;
+        padding: 0;
+        border-right: 1px solid #f2dede;
+        overflow: auto;
+    }
+
+    #stations-list-query {
+        background: #f2dede;
+        margin: 0;
+        clear: both;
+        width: 100%;
+        padding: 0.5em;
+    }
+
+    #stations-list-query-input {
+        width: 98%;
+    }
+
+    #stations-list-content {
+        clear: both;
+    }
+    #stations-list-content ul {
+        background: #dadfe6;
+    }
+</style>
