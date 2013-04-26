@@ -1,19 +1,10 @@
 package models
 
-import java.net.URL
-import java.io.InputStreamReader
-
 import scala.Option
-import scala.xml.Elem
-import scala.xml.XML
-import scala.xml.NodeSeq
 
 import org.joda.time.DateTime
 
-import play.api.Logger
-
 import reactivemongo.bson._
-import handlers._
 import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONInteger
 
@@ -26,10 +17,10 @@ case class StationDetails(id: Option[BSONObjectID], stationId: Int, status: Bool
 
 object StationBSON {
 
-  implicit object Reader extends BSONReader[Station] {
+  implicit object Reader extends BSONDocumentReader[ Station] {
 
-    def fromBSON(document: BSONDocument): Station = {
-      implicit val doc = document.toTraversable
+    def read(document: BSONDocument): Station = {
+      implicit val doc = document
       val station = new Station(
         doc.getAs[BSONInteger]("_id").get.value,
         doc.getAs[BSONString]("name").get.value,
@@ -39,9 +30,9 @@ object StationBSON {
     }
   }
 
-  implicit object Writer extends BSONWriter[Station] {
+  implicit object Writer extends BSONDocumentWriter[Station] {
 
-    def toBSON(station: Station) = {
+    def write(station: Station) = {
       BSONDocument(
         "_id" -> BSONInteger(station.id),
         "name" -> BSONString(station.name),
@@ -55,9 +46,9 @@ object StationBSON {
 
 object StationDetailsBSON {
 
-  implicit object Reader extends BSONReader[StationDetails] {
-    def fromBSON(document: BSONDocument): StationDetails = {
-      implicit val doc = document.toTraversable
+  implicit object Reader extends BSONDocumentReader[StationDetails] {
+    def read(document: BSONDocument): StationDetails = {
+      implicit val doc = document
       val station = new StationDetails(
         doc.getAs[BSONObjectID]("_id"),
         doc.getAs[BSONInteger]("stationId").get.value,
@@ -69,8 +60,8 @@ object StationDetailsBSON {
     }
   }
 
-  implicit object Writer extends BSONWriter[StationDetails] {
-    def toBSON(station: StationDetails) = {
+  implicit object Writer extends BSONDocumentWriter[StationDetails] {
+    def write(station: StationDetails) = {
       BSONDocument(
         "_id" -> station.id.getOrElse(BSONObjectID.generate),
         "stationId" -> BSONInteger(station.stationId),

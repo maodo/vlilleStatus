@@ -10,15 +10,17 @@ import play.api.test.Helpers._
 import play.api.Play.current
 
 import play.modules.reactivemongo.ReactiveMongoPlugin
+
+import reactivemongo.api.collections.default.BSONCollection
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
+import reactivemongo.bson.DefaultBSONHandlers._
 
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Around
 
 trait FakeApp extends Around with org.specs2.specification.Scope {
 
-  val TestMongoDbName = "hfr_test"
+  val TestMongoDbName = "test_vlille_status"
 
   val appTestMongoDatabase =
     Map(("mongodb.uri" -> s"mongodb://127.0.0.1:27017/$TestMongoDbName"))
@@ -31,7 +33,7 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
   def around[T: AsResult](t: => T) = running(FakeApp) {
     Logger.debug("Running test ==================================")
     Logger.debug("Clear test database ===========================")
-    val futureRemove = ReactiveMongoPlugin.db.collection("pages").remove(BSONDocument())
+    val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection]("stations_details").remove(BSONDocument())
     Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
 
     // Run tests inside a fake application
