@@ -33,7 +33,7 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
   def around[T: AsResult](t: => T) = running(FakeApp) {
     Logger.debug("Running test ==================================")
     Logger.debug("Clear test database ===========================")
-    val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection]("stations_details").remove(BSONDocument())
+      val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection]("stations_details").remove(BSONDocument())
     Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
 
     // Run tests inside a fake application

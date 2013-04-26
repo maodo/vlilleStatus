@@ -49,7 +49,7 @@ object VlilleParser {
 
   def fromListXML(node: NodeSeq): Station = {
     new Station(
-      id = (node \ "@id").toString().toInt,
+      _id = (node \ "@id").toString().toInt,
       name = (node \ "@name").toString(),
       longitude = (node \ "@lng").toString().toFloat,
       latitude = (node \ "@lat").toString().toFloat)

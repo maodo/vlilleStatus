@@ -16,14 +16,14 @@ class StationsDaoSpec extends Specification {
    "The StationsDao class" should {
 
      "save all stations" in new FakeApp {
-       val stations = VlilleParser.list()
+       val stations = List(new Station(1, "Sttion 1", 1, 2), new Station(2, "Station 2", 2, 3))
        StationsDao.save(stations)
 
        val futureStations: Future[List[Station]] = StationsDao.find()
        Await.ready(futureStations, Duration(5, TimeUnit.SECONDS))
 
        val savedStations = seq(futureStations)
-       savedStations.size must be >(180)
+       savedStations.size must be equalTo(2)
      }
 
      "save one station" in new FakeApp {
