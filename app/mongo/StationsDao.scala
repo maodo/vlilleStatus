@@ -30,7 +30,7 @@ object StationsDao extends MongoDao {
   def find(): Future[List[Station]] = {
     implicit val format: Format[Station] = Json.format[Station]
     Cache.getOrElse[Future[List[Station]]]("stations") {
-      Logger.debug("Find all documents from " + collectionName())
+      Logger.debug(s"Find all documents from $collectionName")
 
       collection
         .find(Json.obj())

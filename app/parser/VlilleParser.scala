@@ -30,7 +30,7 @@ object VlilleParser {
   val VlilleDetailsUrl = "http://www.vlille.fr/stations/xml-station.aspx?borne="
 
   def xml(httpUrl: String): Elem = {
-    return new VlilleParser(httpUrl).xml()
+    new VlilleParser(httpUrl).xml()
   }
 
   def list(): List[Station] = {
@@ -51,8 +51,8 @@ object VlilleParser {
     new Station(
       _id = (node \ "@id").toString().toInt,
       name = (node \ "@name").toString(),
-      longitude = (node \ "@lng").toString().toFloat,
-      latitude = (node \ "@lat").toString().toFloat)
+      lng = (node \ "@lng").toString().toFloat,
+      lat = (node \ "@lat").toString().toFloat)
   }
 
   def details(stationId: Int): StationDetails = {
