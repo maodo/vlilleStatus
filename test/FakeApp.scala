@@ -1,6 +1,6 @@
 import concurrent.duration.Duration
 import concurrent.Await
-import concurrent.{ExecutionContext, Future}
+import concurrent.{ExecutionContext}
 import ExecutionContext.Implicits.global
 
 import java.util.concurrent.TimeUnit
@@ -33,8 +33,12 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
   def around[T: AsResult](t: => T) = running(FakeApp) {
     Logger.debug("Running test ==================================")
     Logger.debug("Clear test database ===========================")
-      val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection]("stations_details").remove(BSONDocument())
-    Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
+    val collections = List("stations", "stations_details")
+    collections.foreach(collectionName => {
+      Logger.debug(s"Clear collection $collectionName =")
+      val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection](collectionName).remove(BSONDocument())
+      Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
+    })
 
     // Run tests inside a fake application
     AsResult(t)
