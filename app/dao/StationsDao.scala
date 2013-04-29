@@ -1,4 +1,4 @@
-package mongo
+package dao
 
 import concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
@@ -25,7 +25,7 @@ trait MongoDao {
   def collectionName(): String
 }
 
-object StationsDao extends MongoDao {
+object StationDao extends MongoDao {
 
   def collectionName() = "stations"
 
@@ -57,17 +57,17 @@ object StationsDao extends MongoDao {
 
 }
 
-object StationDetailsDao extends MongoDao {
+object StationItemDao extends MongoDao {
 
-  def collectionName() = "stations_details"
+  def collectionName() = "stations_items"
 
-  implicit val writer = Json.format[StationDetails]
-  implicit val reader = Json.writes[StationDetails]
+  implicit val writer = Json.format[StationItem]
+  implicit val reader = Json.writes[StationItem]
 
-  def find(): Future[List[StationDetails]] = {
+  def find(): Future[List[StationItem]] = {
     collection
       .find(Json.obj())
-      .cursor[StationDetails]
+      .cursor[StationItem]
       .toList
   }
 
@@ -88,15 +88,15 @@ object StationDetailsDao extends MongoDao {
     }
   }
 
-  def findRunningItems(): Future[List[StationDetails]] = {
+  def findRunning(): Future[List[StationItem]] = {
     Logger.debug("Search running items")
     collection
       .find(Json.obj("endAt" -> Json.obj("$exists" -> false)))
-      .cursor[StationDetails]
+      .cursor[StationItem]
       .toList()
   }
 
-  def save(stationDetails: StationDetails) = {
+  def save(stationDetails: StationItem) = {
     collection.insert(stationDetails)
   }
 

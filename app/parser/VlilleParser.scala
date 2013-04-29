@@ -73,10 +73,10 @@ object VlilleParser {
    * @param stationId the station id.
    * @return
    */
-  def details(stationId: Int): StationDetails = {
+  def details(stationId: Int): StationItem = {
     val elem = xml(VlilleDetailsUrl + stationId)
 
-    new StationDetails(
+    new StationItem(
       stationId,
       if (((elem \ "status") text).toString().toInt == 1) true else false,
       Integer.parseInt((elem \ "lastupd" text).replaceAll("[\\D]", "")),

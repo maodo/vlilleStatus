@@ -13,7 +13,7 @@ trait MongoModel[T] {
 
 case class Station(_id: Int, name: String, lng: Float, lat: Float) extends MongoModel[Int]
 
-case class StationDetails(_id: Option[BSONObjectID], stationId: Int, down: Boolean,
+case class StationItem(_id: Option[BSONObjectID], stationId: Int, down: Boolean,
                           startAt: DateTime, endAt: Option[DateTime], duration: Long,
                           bikes: Int, attachs: Int) extends MongoModel[Option[BSONObjectID]] {
   def this(stationId: Int, down: Boolean, duration: Int,  bikes: Int, attachs: Int) {
@@ -22,20 +22,19 @@ case class StationDetails(_id: Option[BSONObjectID], stationId: Int, down: Boole
 
 }
 
-//object StationDetailsBSON {
+//object StationItemBSON {
 //
 //  implicit object Reader extends BSONDocumentReader[StationDetails] {
-//    def read(document: BSONDocument): StationDetails = {
+//    def read(document: BSONDocument): StationItem = {
 //      implicit val doc = document
-//      val station = new StationDetails(
+//      val station = new StationItem(
 //        Some(doc.getAs[BSONObjectID]("_id")),
 //        doc.getAs[BSONInteger]("stationId").get.value,
 //        doc.getAs[BSONBoolean]("down").get.value,
 //        doc.getAs[BSONBoolean]("startAt").get.value,
 //        doc.getAs[BSONBoolean]("endAt").get.value,
 //        doc.getAs[BSONInteger]("bikes").get.value,
-//        doc.getAs[BSONInteger]("attachs").get.value,
-//        doc.getAs[BSONDateTime]("when").map(dt => new DateTime(dt.value)))
+//        doc.getAs[BSONInteger]("attachs").get.value
 //      station
 //    }
 //  }

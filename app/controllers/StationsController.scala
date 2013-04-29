@@ -8,7 +8,7 @@ import play.api.mvc._
 import play.api.libs.json._
 
 import models._
-import mongo._
+import dao._
 import parser.VlilleParser
 
 object StationsController extends Controller {
@@ -20,14 +20,15 @@ object StationsController extends Controller {
   def list = Action {
     implicit val writeTweetAsJson = Json.writes[Station]
     Async {
-       StationsDao.find() map {
+       StationDao.find() map {
          stations => Ok(Json.toJson(stations)).as("application/json")
        }
     }
   }
 
   def update = Action {
-     StationsDao.removeAllAndSave(VlilleParser.list())
+     StationDao.removeAllAndSave(VlilleParser.list())
+
      Redirect(routes.StationsController.list())
   }
   

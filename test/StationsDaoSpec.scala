@@ -9,7 +9,7 @@ import concurrent.{Await, Future}
 import play.api.libs.json._
 
 import models._
-import mongo._
+import dao._
 import utils.DateImplicits._
 
 import TestHelpers._
@@ -23,9 +23,9 @@ class StationsDaoSpec extends Specification {
         new Station(_id = 1, name = "Station 1", lng = 1, lat = 2),
         new Station(_id = 2, "Station 2", lng = 2, lat = 3)
       )
-      StationsDao.save(stations)
+      StationDao.save(stations)
 
-      val futureStations: Future[List[Station]] = StationsDao.find()
+      val futureStations: Future[List[Station]] = StationDao.find()
       Await.ready(futureStations, Duration(5, TimeUnit.SECONDS))
 
       val savedStations = seq(futureStations)
@@ -33,9 +33,9 @@ class StationsDaoSpec extends Specification {
     }
 
     "save one station" in new FakeApp {
-      StationDetailsDao.save(new StationDetails(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
+      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
 
-      val futureStations: Future[List[StationDetails]] = StationDetailsDao.find()
+      val futureStations: Future[List[StationItem]] = StationItemsDao.find()
       Await.ready(futureStations, Duration(5, TimeUnit.SECONDS))
 
       val savedStations = seq(futureStations)
@@ -49,32 +49,32 @@ class StationsDaoSpec extends Specification {
     }
 
     "find running items" in new FakeApp {
-      StationDetailsDao.save(new StationDetails(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
-      StationDetailsDao.save(new StationDetails(stationId = 2, down = false, duration = 5, bikes = 0, attachs = 18))
-      StationDetailsDao.save(new StationDetails(stationId = 3, down = true, duration = 5, bikes = 0, attachs = 10))
+      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
+      StationItemsDao.save(new StationItem(stationId = 2, down = false, duration = 5, bikes = 0, attachs = 18))
+      StationItemsDao.save(new StationItem(stationId = 3, down = true, duration = 5, bikes = 0, attachs = 10))
 
       val now = DateTime.now()
-      val futureStationDetails = StationDetailsDao.findRunningItems()
-      Await.ready(futureStationDetails, Duration(5, TimeUnit.SECONDS))
+      val futureItems = StationItemsDao.findRunning()
+      Await.ready(futureItems, Duration(5, TimeUnit.SECONDS))
 
-      val foundStations = seq(futureStationDetails)
-      foundStations.size must be equalTo(3)
+      val items = seq(futureItems)
+      items.size must be equalTo(3)
     }
 
     "update attributes by BSONId" in new FakeApp {
-      StationDetailsDao.save(new StationDetails(stationId = 1, down = true, duration = 5,  bikes = 10, attachs = 20))
-      val futureStationDetails = StationDetailsDao.find()
-      Await.ready(futureStationDetails, Duration(5, TimeUnit.SECONDS))
+      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5,  bikes = 10, attachs = 20))
+      val futureItems = StationItemsDao.find()
+      Await.ready(futureItems, Duration(5, TimeUnit.SECONDS))
 
-      val stations = seq(futureStationDetails)
-      stations must not be Nil
+      val items = seq(futureItems)
+      items must not be Nil
 
-      StationDetailsDao.update(stations.head.id.get, Json.obj("duration" -> 10))
-      val futureStationDetailsAfterUpdate = StationDetailsDao.find()
-      Await.ready(futureStationDetailsAfterUpdate, Duration(5, TimeUnit.SECONDS))
+      StationItemsDao.update(items.head.id.get, Json.obj("duration" -> 10))
+      val futureItemsAfterUpdate = StationItemsDao.find()
+      Await.ready(futureItemsAfterUpdate, Duration(5, TimeUnit.SECONDS))
 
-      val updatedStations = seq(futureStationDetailsAfterUpdate)
-      updatedStations.head.duration must be equalTo(10)
+      val updatedItems = seq(futureItemsAfterUpdate)
+      updatedItems.head.duration must be equalTo(10)
     }
 
   }

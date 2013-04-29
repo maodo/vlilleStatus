@@ -4,6 +4,10 @@ import concurrent.{ExecutionContext}
 import ExecutionContext.Implicits.global
 
 import java.util.concurrent.TimeUnit
+
+import org.specs2.execute.AsResult
+import org.specs2.mutable.Around
+
 import play.api.Logger
 import play.api.test.FakeApplication
 import play.api.test.Helpers._
@@ -15,8 +19,7 @@ import reactivemongo.api.collections.default.BSONCollection
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.DefaultBSONHandlers._
 
-import org.specs2.execute.AsResult
-import org.specs2.mutable.Around
+import dao._
 
 trait FakeApp extends Around with org.specs2.specification.Scope {
 
@@ -33,7 +36,7 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
   def around[T: AsResult](t: => T) = running(FakeApp) {
     Logger.debug("Running test ==================================")
     Logger.debug("Clear test database ===========================")
-    val collections = List("stations", "stations_details")
+    val collections = List(StationDao.collectionName(), StationItemsDao.collectionName())
     collections.foreach(collectionName => {
       Logger.debug(s"\tClear collection $collectionName")
       val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection](collectionName).remove(BSONDocument())
