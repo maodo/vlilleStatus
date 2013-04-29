@@ -35,7 +35,7 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
     Logger.debug("Clear test database ===========================")
     val collections = List("stations", "stations_details")
     collections.foreach(collectionName => {
-      Logger.debug(s"Clear collection $collectionName =")
+      Logger.debug(s"\tClear collection $collectionName")
       val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection](collectionName).remove(BSONDocument())
       Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
     })

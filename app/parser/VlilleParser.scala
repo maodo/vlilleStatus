@@ -55,12 +55,31 @@ object VlilleParser {
       lat = (node \ "@lat").toString().toFloat)
   }
 
+  /**
+   * Parse details station from vlille.
+   * <p>Example:
+   * <pre>
+   * <?xml version="1.0" encoding="utf-16"?>
+   * <station>
+   * <adress>15, BOULEVARD DU GÉNÉRAL DE GAULLE </adress>
+   * <status>0</status>
+   * <bikes>3</bikes>
+   * <attachs>21</attachs>
+   * <paiement>SANS_TPE</paiement>
+   * <lastupd>36 secondes</lastupd>
+   * </station>
+   * </pre>
+   * </p>
+   * @param stationId the station id.
+   * @return
+   */
   def details(stationId: Int): StationDetails = {
     val elem = xml(VlilleDetailsUrl + stationId)
 
     new StationDetails(
       stationId,
       if (((elem \ "status") text).toString().toInt == 1) true else false,
+      Integer.parseInt((elem \ "lastupd" text).replaceAll("[\\D]", "")),
       ((elem \ "bikes") text).toString().toInt,
       ((elem \ "attachs") text).toString().toInt)
   }

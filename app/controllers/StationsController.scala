@@ -9,6 +9,7 @@ import play.api.libs.json._
 
 import models._
 import mongo._
+import parser.VlilleParser
 
 object StationsController extends Controller {
 
@@ -23,6 +24,11 @@ object StationsController extends Controller {
          stations => Ok(Json.toJson(stations)).as("application/json")
        }
     }
+  }
+
+  def update = Action {
+     StationsDao.removeAllAndSave(VlilleParser.list())
+     Redirect(routes.StationsController.list())
   }
   
 }
