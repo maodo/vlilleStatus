@@ -61,8 +61,8 @@ object StationItemDao extends MongoDao {
 
   def collectionName() = "stations_items"
 
-  implicit val writer = Json.format[StationItem]
-  implicit val reader = Json.writes[StationItem]
+  implicit val reader = Json.format[StationItem]
+  implicit val writer = Json.writes[StationItem]
 
   def find(): Future[List[StationItem]] = {
     collection
