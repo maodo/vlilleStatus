@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} -Dprod.MONGOLAB_URI=$MONGOLAB_URI ${JAVA_OPTS} 
++web: target/start -Dhttp.port=$PORT -Dmongodb.uri=$MONGOHQ_URL
