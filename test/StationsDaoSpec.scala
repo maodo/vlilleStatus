@@ -33,9 +33,8 @@ class StationsDaoSpec extends Specification {
     }
 
     "save one station" in new FakeApp {
-      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
-
-      val futureStations: Future[List[StationItem]] = StationItemsDao.find()
+      StationItemDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
+      val futureStations: Future[List[StationItem]] = StationItemDao.find()
       Await.ready(futureStations, Duration(5, TimeUnit.SECONDS))
 
       val savedStations = seq(futureStations)
@@ -49,12 +48,11 @@ class StationsDaoSpec extends Specification {
     }
 
     "find running items" in new FakeApp {
-      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
-      StationItemsDao.save(new StationItem(stationId = 2, down = false, duration = 5, bikes = 0, attachs = 18))
-      StationItemsDao.save(new StationItem(stationId = 3, down = true, duration = 5, bikes = 0, attachs = 10))
+      StationItemDao.save(new StationItem(stationId = 1, down = true, duration = 5, bikes = 10, attachs = 20))
+      StationItemDao.save(new StationItem(stationId = 2, down = false, duration = 5, bikes = 0, attachs = 18))
+      StationItemDao.save(new StationItem(stationId = 3, down = true, duration = 5, bikes = 0, attachs = 10))
 
-      val now = DateTime.now()
-      val futureItems = StationItemsDao.findRunning()
+      val futureItems = StationItemDao.findRunning()
       Await.ready(futureItems, Duration(5, TimeUnit.SECONDS))
 
       val items = seq(futureItems)
@@ -62,15 +60,15 @@ class StationsDaoSpec extends Specification {
     }
 
     "update attributes by BSONId" in new FakeApp {
-      StationItemsDao.save(new StationItem(stationId = 1, down = true, duration = 5,  bikes = 10, attachs = 20))
-      val futureItems = StationItemsDao.find()
+      StationItemDao.save(new StationItem(stationId = 1, down = true, duration = 5,  bikes = 10, attachs = 20))
+      val futureItems = StationItemDao.find()
       Await.ready(futureItems, Duration(5, TimeUnit.SECONDS))
 
       val items = seq(futureItems)
       items must not be Nil
 
-      StationItemsDao.update(items.head.id.get, Json.obj("duration" -> 10))
-      val futureItemsAfterUpdate = StationItemsDao.find()
+      StationItemDao.update(items.head.id.get, Json.obj("duration" -> 10))
+      val futureItemsAfterUpdate = StationItemDao.find()
       Await.ready(futureItemsAfterUpdate, Duration(5, TimeUnit.SECONDS))
 
       val updatedItems = seq(futureItemsAfterUpdate)

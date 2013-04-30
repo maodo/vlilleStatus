@@ -36,10 +36,10 @@ trait FakeApp extends Around with org.specs2.specification.Scope {
   def around[T: AsResult](t: => T) = running(FakeApp) {
     Logger.debug("Running test ==================================")
     Logger.debug("Clear test database ===========================")
-    val collections = List(StationDao.collectionName(), StationItemsDao.collectionName())
-    collections.foreach(collectionName => {
-      Logger.debug(s"\tClear collection $collectionName")
-      val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection](collectionName).remove(BSONDocument())
+    val daos = List(StationDao, StationItemDao)
+    daos.foreach(dao => {
+      Logger.debug(s"\tClear collection $dao")
+      val futureRemove = ReactiveMongoPlugin.db.collection[BSONCollection](dao.collectionName()).remove(BSONDocument())
       Await.ready(futureRemove, Duration(60, TimeUnit.SECONDS))
     })
 
