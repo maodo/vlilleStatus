@@ -36,7 +36,7 @@ object StationDao extends MongoDao {
 
       collection
         .find(Json.obj())
-        .sort(Json.obj("name" -> -1))
+        .sort(Json.obj("name" -> 1))
         .cursor[Station]
         .toList
     }
