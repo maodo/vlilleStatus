@@ -3,9 +3,8 @@ package dao
 import concurrent.{ExecutionContext, Future}
 import ExecutionContext.Implicits.global
 
-import play.api.Play.current
-import play.api.cache.Cache
 import play.api.Logger
+import play.api.libs.json._
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -15,9 +14,10 @@ import play.modules.reactivemongo.json.BSONFormats._
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
 
+import reactivemongo.bson._
+import reactivemongo.core.commands._
+
 import models._
-import reactivemongo.core.commands.{Project, Match, Aggregate}
-import reactivemongo.bson.{BSONObjectID, BSONDocument}
 
 object StationDao
 
@@ -28,21 +28,21 @@ object StationItemDao extends MongoDao[StationItem] {
   implicit val reader = Json.format[StationItem]
   implicit val writer = Json.writes[StationItem]
 
-  def sampleAggregate() = {
+  def topUp() = uptime(false)
+  def topDown() = uptime()
+
+  def uptime(down: Boolean = true): Future[Stream[BSONDocument]] = {
+    Logger.debug(s"Aggreating duration time by status $down")
+
     val command = Aggregate(collectionName(),
       Seq(
-        Match(BSONDocument("stationId" -> BSONDocument("$in" -> List(1, 2)))),
-        Project(("_id", 1), ("stationId", 1), ("down", 1), ("startAt", 1))
+        Match(BSONDocument("down" -> true)),
+        GroupField("stationId")(("count", SumField("duration"))),
+        Sort(List(Descending("count"))),
+        Limit(10)
       )
     )
-    val res = db.command(command)
-    res.map {
-      value => {
-        value.foreach(v => {
-          println(v.get("stationId"))
-        })
-      }
-    }
+    db.command(command)
   }
 
   def findRunning(): Future[List[StationItem]] = {
