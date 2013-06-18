@@ -1,0 +1,27 @@
+##################
+# Vlille Status  #
+#    Worksheet   #
+##################
+
+# Top 10 stations down/up
+# Change the match down clause.
+
+db.stations_items.aggregate([
+	{
+		$match: {
+			"down": true,
+		}
+	},
+	{
+		$group: {
+			_id: { id: "$stationId" },
+			count: { $sum: "$duration" }
+		}
+	},
+	{
+		$sort: { count: -1 }
+	},
+	{
+		$limit: 10
+	}
+]);

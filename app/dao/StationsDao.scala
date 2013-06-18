@@ -19,57 +19,14 @@ import models._
 import reactivemongo.core.commands.{Project, Match, Aggregate}
 import reactivemongo.bson.{BSONObjectID, BSONDocument}
 
-trait MongoDao {
-  def db = ReactiveMongoPlugin.db
-  def collection: JSONCollection = db.collection(collectionName())
-  def collectionName(): String
-}
+object StationDao
 
-object StationDao extends MongoDao {
-
-  def collectionName() = "stations"
-
-  def find(): Future[List[Station]] = {
-    Cache.getOrElse[Future[List[Station]]]("stations") {
-      implicit val format: Format[Station] = Json.format[Station]
-      Logger.debug(s"Find all documents from $collectionName")
-
-      collection
-        .find(Json.obj())
-        .sort(Json.obj("name" -> 1))
-        .cursor[Station]
-        .toList
-    }
-  }
-
-  def save(stations: List[Station]) = {
-    implicit val writes: Writes[Station] = Json.writes[Station]
-    Logger.debug("Save stations")
-
-    stations.foreach(station => collection.insert(station))
-  }
-
-  def removeAllAndSave(stations: List[Station]) = {
-    Logger.debug("Remove all stations")
-    collection.remove(Json.obj())
-    save(stations)
-  }
-
-}
-
-object StationItemDao extends MongoDao {
+object StationItemDao extends MongoDao[StationItem] {
 
   def collectionName() = "stations_items"
 
   implicit val reader = Json.format[StationItem]
   implicit val writer = Json.writes[StationItem]
-
-  def find(): Future[List[StationItem]] = {
-    collection
-      .find(Json.obj())
-      .cursor[StationItem]
-      .toList
-  }
 
   def sampleAggregate() = {
     val command = Aggregate(collectionName(),

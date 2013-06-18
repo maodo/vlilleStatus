@@ -6,6 +6,7 @@ import play.api.libs.json._
 
 import models._
 import dao._
+import dao.StationItemDao.reader
 import reactivemongo.bson.BSONObjectID
 import utils.DateImplicits._
 
@@ -16,12 +17,12 @@ class StationsDaoSpec extends Specification {
   "The StationDao class" should {
 
     "save all stations and find them in ascending order" in new FakeApp {
-      StationDao.save(List(
+      StationListDao.save(List(
         new Station(_id = 1, name = "Station A", lng = 1, lat = 2),
         new Station(_id = 2, name = "Station Z", lng = 2, lat = 3)
       ))
 
-      val stations = result(StationDao.find())
+      val stations = result(StationListDao.findAll())
       stations.size must be equalTo (2)
       stations(0).name must be equalTo("Station A")
       stations(1).name must be equalTo("Station Z")
@@ -36,7 +37,7 @@ class StationsDaoSpec extends Specification {
     "save one station item and find it" in new FakeApp {
       saveDefaultStationItem()
 
-      val stations = result(StationItemDao.find())
+      val stations = result(StationItemDao.findAll())
       stations.size must be equalTo (1)
 
       val firstStation = stations.head
@@ -62,11 +63,11 @@ class StationsDaoSpec extends Specification {
     "update attributes by BSONId" in new FakeApp {
       saveDefaultStationItem()
 
-      val items = result(StationItemDao.find())
-      items must not be Nil
+      val items = result(StationItemDao.findAll())
+      items must not be empty
       StationItemDao.update(items.head.id.get, Json.obj("duration" -> 10))
 
-      val updatedItems = result(StationItemDao.find())
+      val updatedItems = result(StationItemDao.findAll())
       updatedItems.head.duration must be equalTo(10)
     }
 

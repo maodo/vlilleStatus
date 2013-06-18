@@ -20,14 +20,14 @@ object StationsController extends Controller {
   def list = Action {
     implicit val writeTweetAsJson = Json.writes[Station]
     Async {
-       StationDao.find() map {
+       StationListDao.findAll() map {
          stations => Ok(Json.toJson(stations)).as("application/json")
        }
     }
   }
 
   def update = Action {
-     StationDao.removeAllAndSave(VlilleParser.list())
+     StationListDao.removeAllAndSave(VlilleParser.list())
 
      Redirect(routes.StationsController.list())
   }

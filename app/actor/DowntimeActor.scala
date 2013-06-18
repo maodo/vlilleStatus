@@ -12,19 +12,17 @@ import akka.actor.Actor
 import play.api.Logger
 import play.api.libs.json._
 
-import reactivemongo.bson.BSONObjectID
-
 import models._
 import parser._
 import dao._
 import utils.DateImplicits._
 
-class StationDownTimeActor extends Actor {
+class DownTimeActor extends Actor {
 
   def receive = {
     case _ => {
       Logger.debug("Find all stations and save each station item details")
-      val futureStations = StationDao.find()
+      val futureStations = StationListDao.findAll()
       futureStations map {
         stations =>
           val futureRunningItems = StationItemDao.findRunning()

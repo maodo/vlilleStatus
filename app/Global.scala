@@ -23,7 +23,7 @@ object Global extends GlobalSettings {
 
   def reminderDaemon(app: Application) = {
     Logger.info("Scheduling the station down time actor")
-    val reminderActor = Akka.system(app).actorOf(Props(new StationDownTimeActor()))
+    val reminderActor = Akka.system(app).actorOf(Props(new DownTimeActor()))
     Akka.system(app).scheduler.schedule(0 seconds, 2 minutes, reminderActor, "vlilleStationDowntimeActor")
   }
 
